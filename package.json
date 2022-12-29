@@ -1,5 +1,6 @@
 {
   "name": "goit-slimmom-back-end-nodejs-tp",
+  "name": "goit-slimmom-back-end-nodejs-tp",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -51,6 +52,8 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/pixelboyXL/goit-slimmom-back-end-nodejs-tp/issues"
+    "url": "https://github.com/pixelboyXL/goit-slimmom-back-end-nodejs-tp/issues"
   },
+  "homepage": "https://github.com/pixelboyXL/goit-slimmom-back-end-nodejs-tp#readme"
   "homepage": "https://github.com/pixelboyXL/goit-slimmom-back-end-nodejs-tp#readme"
 }
