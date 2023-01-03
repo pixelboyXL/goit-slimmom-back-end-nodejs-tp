@@ -16,7 +16,6 @@ const googleAuthSignup = async (req, res) => {
     access_type: "offline",
     prompt: "consent",
   });
-
   return res.redirect(
     `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedParams}`
   );
@@ -28,7 +27,6 @@ const googleSignupRedirect = async (req, res) => {
   const urlParams = queryString.parse(urlObj.search);
   const parseUrlParams = Object.values(urlParams);
   const code = parseUrlParams[0];
-
   const tokenData = await axios({
     url: `https://oauth2.googleapis.com/token`,
     method: "post",
@@ -40,7 +38,6 @@ const googleSignupRedirect = async (req, res) => {
       code: code,
     },
   });
-
   const userData = await axios({
     url: "https://www.googleapis.com/oauth2/v2/userinfo",
     method: "get",
@@ -48,33 +45,23 @@ const googleSignupRedirect = async (req, res) => {
       Authorization: `Bearer ${tokenData.data.access_token}`,
     },
   });
-
   const newUser = {
     name: userData.data.given_name,
     email: userData.data.email,
     password: "123456789",
   };
-
   const firstSearchUser = await User.findOne({ email: userData.data.email });
-
   if (firstSearchUser) {
     return res.redirect(`${process.env.FRONTEND_URL_LOGIN}`);
-  }
+  };
   await User.create(newUser);
   const user = await User.findOne({ email: userData.data.email });
-  console.log("user", user);
-
   const payload = {
     id: user._id,
   };
-
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
-  console.log("token", token);
-
   await User.findByIdAndUpdate(user._id, { token });
   const userUpdate = await User.findOne({ email: userData.data.email });
-  console.log(userUpdate);
-
   return res.redirect(
     `${process.env.FRONTEND_URL}?name=${userUpdate.name}&email=${userUpdate.email}&token=${userUpdate.token}&userid=${userUpdate._id}`
   );
@@ -92,7 +79,6 @@ const googleAuthLogin = async (req, res) => {
     access_type: "offline",
     prompt: "consent",
   });
-
   return res.redirect(
     `https://accounts.google.com/o/oauth2/v2/auth?${stringifiedParams}`
   );
@@ -104,7 +90,6 @@ const googleLoginRedirect = async (req, res) => {
   const urlParams = queryString.parse(urlObj.search);
   const parseUrlParams = Object.values(urlParams);
   const code = parseUrlParams[0];
-
   const tokenData = await axios({
     url: `https://oauth2.googleapis.com/token`,
     method: "post",
@@ -116,7 +101,6 @@ const googleLoginRedirect = async (req, res) => {
       code: code,
     },
   });
-
   const userData = await axios({
     url: "https://www.googleapis.com/oauth2/v2/userinfo",
     method: "get",
@@ -124,22 +108,16 @@ const googleLoginRedirect = async (req, res) => {
       Authorization: `Bearer ${tokenData.data.access_token}`,
     },
   });
-
   const firstSearchUser = await User.findOne({ email: userData.data.email });
-
   if (!firstSearchUser) {
     return res.redirect(`${process.env.FRONTEND_URL_REGISTER}`);
-  }
-
+  };
   const payload = {
     id: firstSearchUser._id,
   };
-
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
-
   await User.findByIdAndUpdate(firstSearchUser._id, { token });
   const userUpdate = await User.findOne({ email: userData.data.email });
-
   return res.redirect(
     `${process.env.FRONTEND_URL}?name=${userUpdate.name}&email=${userUpdate.email}&token=${userUpdate.token}`
   );
